@@ -1,21 +1,21 @@
-package com.cinema_booking.booking.seat.dto;
+package com.cinema_booking.booking.seat.dto.model;
 
 import java.util.UUID;
 
-import com.cinema_booking.booking.room.model.Room;
 import com.cinema_booking.booking.seat.model.SeatState;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Data;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SeatDTO {
+public class SeatRequest {
     private UUID id;
     private SeatState state;
     private String row;
     private String column;
-    private Room rooms;
 }

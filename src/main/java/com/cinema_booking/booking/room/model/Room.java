@@ -1,10 +1,8 @@
 package com.cinema_booking.booking.room.model;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.cinema_booking.booking.movie.model.Movie;
@@ -33,16 +30,17 @@ public class Room {
     @Column(name = "id", columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @Column(name = "roomName")
+    @Column(name = "room_name", nullable = false)
     private String roomName;
 
-    @Column(name = "roomSeat")
-    private int roomSeat;
+    @Column(name = "room_seat_counter", nullable = false)
+    private int roomSeatCounter;
 
     @ManyToMany()
     @JoinTable(name = "room_movie", joinColumns = @JoinColumn(name = "room_id"), inverseJoinColumns = @JoinColumn(name = "movie_id"))
-    private List<Movie> movies;
+    private Set<Movie> movies;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany()
+    @JoinTable(name = "room_seat", joinColumns = @JoinColumn(name = "room_id"), inverseJoinColumns = @JoinColumn(name = "seat_id"))
     private Set<Seat> seats;
 }

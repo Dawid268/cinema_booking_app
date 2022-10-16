@@ -1,20 +1,24 @@
 package com.cinema_booking.booking.seat.dto;
 
-import org.mapstruct.InheritInverseConfiguration;
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.cinema_booking.booking.room.dto.RoomMapper;
+import com.cinema_booking.booking.seat.dto.model.SeatRequest;
+import com.cinema_booking.booking.seat.dto.model.SeatResponse;
 import com.cinema_booking.booking.seat.model.Seat;
 
-@Mapper(uses = { RoomMapper.class }, componentModel = "spring")
+@Mapper()
 public interface SeatMapper {
 
     @Mapping(source = "state", target = "seatState")
     @Mapping(source = "row", target = "seatRow")
     @Mapping(source = "column", target = "seatColumn")
-    Seat mapToSeat(SeatDTO seatDTO);
+    Seat mapSeatRequestToSeat(SeatRequest seatRequest);
 
-    @InheritInverseConfiguration(name = "mapToSeat")
-    SeatDTO mapToSeatDTO(Seat seat);
+    SeatResponse mapSeatToSeatResponse(Seat seat);
+
+    List<SeatResponse> mapSeatListToSeatResponseList(List<Seat> seats);
+
 }

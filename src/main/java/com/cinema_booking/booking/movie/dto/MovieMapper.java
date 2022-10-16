@@ -1,15 +1,29 @@
 package com.cinema_booking.booking.movie.dto;
 
-import org.mapstruct.InheritInverseConfiguration;
+import java.util.List;
+import java.util.Set;
+
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
+import com.cinema_booking.booking.movie.dto.model.MovieRequest;
+import com.cinema_booking.booking.movie.dto.model.MovieResponse;
 import com.cinema_booking.booking.movie.model.Movie;
-import com.cinema_booking.booking.room.dto.RoomMapper;
 
-@Mapper(uses = { RoomMapper.class }, componentModel = "spring")
+@Mapper()
 public interface MovieMapper {
-    Movie mapToMovie(Movie movieDTO);
 
-    @InheritInverseConfiguration(name = "mapToMovie")
-    MovieDTO mapMovieToMovieDTO(Movie movie);
+    @Mapping(source = "title", target = "movieTitle")
+    @Mapping(source = "duration", target = "movieDurationTime")
+    Movie mapMovieRequestToMovie(MovieRequest movieRequest);
+
+    MovieRequest mapMovieRequestToMovie(Movie movie);
+
+    @Mapping(source = "movieTitle", target = "title")
+    @Mapping(source = "movieDurationTime", target = "duration")
+    MovieResponse mapMovieToMovieResponse(Movie movie);
+
+    List<MovieResponse> mapMovieListToMovieResponse(Set<Movie> movies);
+
+    Set<Movie> mapMovieRequestToMovieLis(List<MovieRequest> movieRequests);
 }

@@ -3,10 +3,10 @@ package com.cinema_booking.booking.room;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,68 +16,43 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cinema_booking.booking.room.dto.RoomDTO;
-import com.cinema_booking.booking.room.model.Room;
+import com.cinema_booking.booking.room.dto.model.RoomRequest;
+import com.cinema_booking.booking.room.dto.model.RoomResponse;
 
-@Controller
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/room")
+@RequiredArgsConstructor
 public class RoomController {
 
     private final RoomService roomService;
 
-    @Autowired
-    public RoomController(RoomService roomService) {
-        this.roomService = roomService;
-    }
-
     @GetMapping("/list")
-    public ResponseEntity<List<RoomDTO>> getRoomList() {
-        try {
-            List<RoomDTO> roomDTOList = roomService.getRoomDTOList();
-            return new ResponseEntity<>(roomDTOList, HttpStatus.OK);
-        } catch (Exception error) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<List<RoomResponse>> getRoomList() {
+        List<RoomResponse> roomDTOList = roomService.getRoomResponseList();
+        return new ResponseEntity<>(roomDTOList, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoomDTO> getRoomDTOById(@PathVariable("id") UUID id) {
-        try {
-            RoomDTO roomDTO = roomService.getRoomDTOById(id);
-            return new ResponseEntity<>(roomDTO, HttpStatus.OK);
-        } catch (Exception error) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<RoomResponse> getRoomById(@PathVariable("id") UUID id) {
+        return new ResponseEntity<>(roomService.getRoomById(id), HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Room> addRoom(@RequestBody RoomDTO roomDTO) {
-        try {
-            Room createdRoom = roomService.createRoom(roomDTO);
-            return new ResponseEntity<>(createdRoom, HttpStatus.OK);
-        } catch (Exception error) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<RoomResponse> addRoom(@Valid @RequestBody RoomRequest roomRequest) {
+        return new ResponseEntity<>(roomService.createRoom(roomRequest), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RoomDTO> updateRoom(@RequestBody RoomDTO roomDTO, @PathVariable("id") UUID id) {
-        try {
-            RoomDTO updatedRoom = roomService.updateRoom(roomDTO, id);
-            return new ResponseEntity<>(updatedRoom, HttpStatus.OK);
-        } catch (Exception error) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<RoomResponse> updateRoom(@Valid @RequestBody RoomRequest roomRequest,
+            @PathVariable("id") UUID id) {
+        return new ResponseEntity<>(roomService.updateRoom(roomRequest, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRoom(@PathVariable("id") UUID id) {
-        try {
-            roomService.deleteRoom(id);
-            return new ResponseEntity<>("success", HttpStatus.OK);
-        } catch (Exception error) {
-            return new ResponseEntity<>(error.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        roomService.deleteRoom(id);
+        return ResponseEntity.noContent().build();
     }
 }

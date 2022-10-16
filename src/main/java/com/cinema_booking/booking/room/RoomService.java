@@ -6,8 +6,10 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cinema_booking.booking.room.dto.RoomDTO;
+import com.cinema_booking.booking.exception.RoomNotFindException;
 import com.cinema_booking.booking.room.dto.RoomMapper;
+import com.cinema_booking.booking.room.dto.model.RoomRequest;
+import com.cinema_booking.booking.room.dto.model.RoomResponse;
 import com.cinema_booking.booking.room.model.Room;
 
 @Service
@@ -22,36 +24,35 @@ public class RoomService {
         this.roomRepository = roomRepository;
     }
 
-    public RoomDTO getRoomDTOById(UUID id) {
+    public RoomResponse getRoomById(UUID id) {
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid room Id:" + id));
-        RoomDTO roomDTO = roomMapper.mapRoomToRoomDTO(room);
-        return roomDTO;
+                .orElseThrow(() -> new RoomNotFindException());
+        return roomMapper.mapRoomToRoomResponse(room);
     }
 
-    public List<RoomDTO> getRoomDTOList() {
+    public List<RoomResponse> getRoomResponseList() {
         List<Room> roomList = roomRepository.findAll();
-        List<RoomDTO> roomDTOList = roomMapper.mapRoomListToRoomDTOList(roomList);
-        return roomDTOList;
+        List<RoomResponse> roomResponseList = roomMapper.mapRoomListToRoomResponseList(roomList);
+        return roomResponseList;
     }
 
-    public Room createRoom(RoomDTO roomDTO) {
-        Room newRoom = roomMapper.mapToRoom(roomDTO);
-        return roomRepository.save(newRoom);
+    public RoomResponse createRoom(RoomRequest roomRequest) {
+        Room newRoom = roomMapper.mapRoomRequestToRoom(roomRequest);
+        return roomMapper.mapRoomToRoomResponse(roomRepository.save(newRoom));
     }
 
-    public RoomDTO updateRoom(RoomDTO roomDTO, UUID id) {
+    public RoomResponse updateRoom(RoomRequest roomRequest, UUID id) {
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid room Id:" + id));
-        Room newRoomData = roomMapper.mapToRoom(roomDTO);
+                .orElseThrow(() -> new RoomNotFindException());
+        Room newRoomData = roomMapper.mapRoomRequestToRoom(roomRequest);
         room.setRoomName(newRoomData.getRoomName());
-        room.setRoomSeat(newRoomData.getRoomSeat());
-        return roomMapper.mapRoomToRoomDTO(roomRepository.save(room));
+        room.setRoomSeatCounter(newRoomData.getRoomSeatCounter());
+        return roomMapper.mapRoomToRoomResponse(roomRepository.save(room));
     }
 
     public void deleteRoom(UUID id) {
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid room Id:" + id));
+                .orElseThrow(() -> new RoomNotFindException());
         roomRepository.delete(room);
     }
 }
