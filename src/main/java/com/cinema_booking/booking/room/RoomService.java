@@ -26,7 +26,7 @@ public class RoomService {
 
     public RoomResponse getRoomById(UUID id) {
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new RoomNotFindException());
+                .orElseThrow(() -> new RoomNotFindException(id));
         return roomMapper.mapRoomToRoomResponse(room);
     }
 
@@ -43,7 +43,7 @@ public class RoomService {
 
     public RoomResponse updateRoom(RoomRequest roomRequest, UUID id) {
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new RoomNotFindException());
+                .orElseThrow(() -> new RoomNotFindException(id));
         Room newRoomData = roomMapper.mapRoomRequestToRoom(roomRequest);
         room.setRoomName(newRoomData.getRoomName());
         room.setRoomSeatCounter(newRoomData.getRoomSeatCounter());
@@ -52,7 +52,7 @@ public class RoomService {
 
     public void deleteRoom(UUID id) {
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new RoomNotFindException());
+                .orElseThrow(() -> new RoomNotFindException(id));
         roomRepository.delete(room);
     }
 }
